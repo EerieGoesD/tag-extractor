@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tag Extractor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:       #0a0a0c;
+    --surface:  #111114;
+    --surface2: #18181c;
+    --border:   #222228;
+    --text:     #d4d4d8;
+    --text-dim: #9b9ba6;
+    --accent:   #6366f1;
+    --accent-h: #818cf8;
+    --danger:   #ef4444;
+    --success:  #22c55e;
+    --warning:  #eab308;
+    --radius:   10px;
+    --font:     'DM Sans', system-ui, sans-serif;
+    --mono:     'JetBrains Mono', monospace;
+  }
+
+  html[data-theme="light"] {
+    --bg:       #f4f4f6;
+    --surface:  #ffffff;
+    --surface2: #ececf1;
+    --border:   #d9d9e0;
+    --text:     #1b1b20;
+    --text-dim: #65656f;
+    --accent:   #6366f1;
+    --accent-h: #4f46e5;
+    --danger:   #dc2626;
+    --success:  #16a34a;
+    --warning:  #d97706;
+  }
+
+  html, body { min-height: 100%; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 22px 22px 40px; display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ── Header ── */
+  .app-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .app-header-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--accent-h); filter: drop-shadow(0 0 6px rgba(99,102,241,0.5)); }
+  .app-header h1 { font-size: 17px; font-weight: 700; color: var(--accent-h); letter-spacing: -0.3px; }
+  .spacer { flex: 1; }
+  .theme-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; width: 34px; height: 30px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-dim); cursor: pointer; transition: color 0.12s, background 0.12s; flex-shrink: 0; }
+  .theme-btn:hover { color: var(--text); background: var(--surface); }
+  .theme-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .theme-btn .icon-moon { display: none; }
+  html[data-theme="light"] .theme-btn .icon-sun  { display: none; }
+  html[data-theme="light"] .theme-btn .icon-moon { display: inline; }
+
+  .subtitle { font-size: 13px; color: var(--text-dim); margin: 0 0 20px 30px; }
+
+  /* ── Layout ── */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1; min-height: 0; }
+  @media (max-width: 780px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; min-height: 360px; }
+  .panel-head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .panel-head .label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+  .panel-head .count { font-family: var(--mono); font-size: 11.5px; color: var(--accent-h); background: rgba(99,102,241,0.12); padding: 2px 8px; border-radius: 20px; }
+
+  /* ── Input ── */
+  textarea {
+    flex: 1; width: 100%; resize: none; border: none; outline: none;
+    background: transparent; color: var(--text);
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
+    padding: 14px; min-height: 260px;
+  }
+  textarea::placeholder { color: var(--text-dim); opacity: 0.7; }
+  textarea::-webkit-scrollbar { width: 7px; }
+  textarea::-webkit-scrollbar-thumb { background: #3a3a42; border-radius: 3px; }
+  textarea::-webkit-scrollbar-track { background: transparent; }
+
+  /* ── Output ── */
+  .output { flex: 1; overflow: auto; padding: 14px; }
+  .output::-webkit-scrollbar { width: 7px; }
+  .output::-webkit-scrollbar-thumb { background: #3a3a42; border-radius: 3px; }
+  .output::-webkit-scrollbar-track { background: transparent; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; font-family: var(--mono); font-size: 12.5px; color: var(--text);
+    animation: fadeIn 0.18s ease both;
+  }
+  .chip .n { font-size: 10.5px; color: var(--text-dim); background: var(--bg); border-radius: 20px; padding: 1px 7px; min-width: 20px; text-align: center; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+
+  .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 8px; color: var(--text-dim); text-align: center; padding: 30px; }
+  .empty .icon { font-size: 30px; opacity: 0.22; }
+  .empty p { font-size: 13px; }
+
+  /* ── Toolbar ── */
+  .toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+
+  .btn { padding: 7px 14px; border: none; border-radius: var(--radius); font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .btn:active { transform: scale(0.97); }
+  .btn-accent { background: var(--accent); color: #fff; }
+  .btn-accent:hover { background: var(--accent-h); }
+  .btn-accent:disabled { background: #2a2a40; color: #555; cursor: default; transform: none; }
+  html[data-theme="light"] .btn-accent:disabled { background: #d9d9e0; color: #a5a5b0; }
+  .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+  .btn-ghost:disabled { opacity: 0.4; cursor: default; transform: none; }
+  .btn-ghost:disabled:hover { background: transparent; color: var(--text-dim); }
+
+  .toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-dim); cursor: pointer; user-select: none; }
+  .toggle input { accent-color: var(--accent); cursor: pointer; margin: 0; }
+
+  /* ── Footer ── */
+  .global-footer { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 20px 0 0; margin-top: 22px; }
+  .footer-links { display: flex; align-items: center; gap: 6px; font-size: 12px; flex-wrap: wrap; justify-content: center; }
+  .footer-links span { color: var(--text-dim); }
+  .footer-links a { text-decoration: none; transition: color 0.15s; cursor: pointer; font-weight: 600; }
+  .footer-links a#linkEerie { color: var(--accent-h); }
+  .footer-links a#linkEerie:hover { color: var(--text); }
+  .footer-links a#linkCoffee { color: #facc15; }
+  .footer-links a#linkCoffee:hover { color: #f0d060; }
+  .footer-links a#linkReport { color: var(--text-dim); }
+  .footer-links a#linkReport:hover { color: var(--text); }
+  .footer-links .sep { color: var(--border); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="app-header">
+    <div class="app-header-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7.2-7.2a2 2 0 0 1-.6-1.4V4a1 1 0 0 1 1-1h8a2 2 0 0 1 1.4.6l7.4 7.4a2 2 0 0 1 0 2.8z"/>
+        <circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+    <h1>Tag Extractor</h1>
+    <div class="spacer"></div>
+    <button class="theme-btn" id="themeBtn" title="Toggle light / dark theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+  <p class="subtitle">Paste the text on the left. Every unique tag in &lt;angle brackets&gt; is pulled out on the right.</p>
+
+  <div class="grid">
+
+    <!-- Input -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="label">Paste Here</span>
+        <div class="spacer"></div>
+        <span class="count" id="inputCount">0 tags found</span>
+      </div>
+      <textarea id="input" spellcheck="false" placeholder="1.
+00:00:00.000 - 00:00:00.252 : &lt;man1&gt; &lt;man2&gt; on &lt;background1&gt;
+
+2.
+00:00:00.238 - 00:00:02.010 : &lt;man1&gt; &lt;man2&gt; on &lt;background1&gt;"></textarea>
+      <div class="toolbar">
+        <button class="btn btn-ghost" id="clearBtn">Clear</button>
+        <button class="btn btn-ghost" id="pasteBtn">Paste from clipboard</button>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="label">Unique Tags</span>
+        <div class="spacer"></div>
+        <span class="count" id="uniqueCount">0 unique</span>
+      </div>
+      <div class="output" id="output">
+        <div class="empty" id="empty">
+          <div class="icon">&#9873;</div>
+          <p>Unique tags will appear here as you paste</p>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-accent" id="copyBtn" disabled>Copy tags</button>
+        <label class="toggle"><input type="checkbox" id="sortToggle" /> Sort A&ndash;Z</label>
+        <label class="toggle"><input type="checkbox" id="countToggle" checked /> Show counts</label>
+        <div class="spacer"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="global-footer">
+    <div class="footer-links">
+      <a id="linkCoffee" href="https://buymeacoffee.com/eeriegoesd" target="_blank" rel="noopener">Support This Project</a>
+      <span class="sep">|</span>
+      <span>Made by</span>
+      <a id="linkEerie" href="https://eeriegoesd.com" target="_blank" rel="noopener">EERIE</a>
+      <span class="sep">|</span>
+      <a id="linkReport" href="https://github.com/EerieGoesD/tag-extractor/issues" target="_blank" rel="noopener">Report Issue</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const input       = $("#input");
+  const output      = $("#output");
+  const empty       = $("#empty");
+  const inputCount  = $("#inputCount");
+  const uniqueCount = $("#uniqueCount");
+  const copyBtn     = $("#copyBtn");
+  const clearBtn    = $("#clearBtn");
+  const pasteBtn    = $("#pasteBtn");
+  const sortToggle  = $("#sortToggle");
+  const countToggle = $("#countToggle");
+
+  const TAG_RE = /<[^<>]+>/g;
+
+  // Pull every <tag>, count how many times each appears, keep first-seen order.
+  function extract(text) {
+    const matches = text.match(TAG_RE) || [];
+    const map = new Map();          // tag -> count (Map keeps insertion order)
+    for (const raw of matches) {
+      const tag = raw.trim();
+      map.set(tag, (map.get(tag) || 0) + 1);
+    }
+    return { total: matches.length, map };
+  }
+
+  function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  let currentTags = [];   // ordered list of unique tag strings (as displayed)
+
+  function render() {
+    const { total, map } = extract(input.value);
+
+    let tags = [...map.keys()];
+    if (sortToggle.checked) tags = tags.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+    currentTags = tags;
+
+    inputCount.textContent  = total === 1 ? "1 tag found" : total.toLocaleString() + " tags found";
+    uniqueCount.textContent = tags.length + " unique";
+    copyBtn.disabled = tags.length === 0;
+
+    if (!tags.length) {
+      output.innerHTML = "";
+      output.appendChild(empty);
+      empty.querySelector("p").textContent = input.value.trim()
+        ? "No tags found. Tags need to be wrapped in < > angle brackets."
+        : "Unique tags will appear here as you paste";
+      return;
+    }
+
+    const showCounts = countToggle.checked;
+    output.innerHTML = '<div class="chips">' + tags.map(t => {
+      const n = map.get(t);
+      const badge = showCounts ? `<span class="n">${n}</span>` : "";
+      return `<span class="chip">${esc(t)}${badge}</span>`;
+    }).join("") + '</div>';
+  }
+
+  input.addEventListener("input", render);
+  sortToggle.addEventListener("change", render);
+  countToggle.addEventListener("change", render);
+
+  clearBtn.addEventListener("click", () => { input.value = ""; render(); input.focus(); });
+
+  pasteBtn.addEventListener("click", async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      input.value = text;
+      render();
+    } catch { input.focus(); }   // clipboard blocked (e.g. no permission) -> let user paste manually
+  });
+
+  copyBtn.addEventListener("click", async () => {
+    if (!currentTags.length) return;
+    const text = currentTags.join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      const old = copyBtn.textContent;
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => { copyBtn.textContent = old; }, 1200);
+    } catch {}
+  });
+
+  // ── Theme ──
+  const themeBtn = $("#themeBtn");
+  function applyTheme(theme) {
+    const t = theme === "light" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem("tagx.theme", t); } catch {}
+  }
+  themeBtn.addEventListener("click", () => {
+    applyTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
+  });
+  (function initTheme() {
+    let saved = "dark";
+    try { saved = localStorage.getItem("tagx.theme") || "dark"; } catch {}
+    applyTheme(saved);
+  })();
+
+  render();
+  input.focus();
+})();
+</script>
+</body>
+</html>
