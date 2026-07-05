@@ -92,6 +92,9 @@
   html[data-theme="light"] .btn-accent:disabled { background: #d9d9e0; color: #a5a5b0; }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
   .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+  .toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-dim); cursor: pointer; user-select: none; }
+  .toggle input { accent-color: var(--accent); cursor: pointer; margin: 0; }
 </style>
 </head>
 <body>
@@ -137,6 +140,7 @@
       </div>
       <div class="toolbar">
         <button class="btn btn-accent" id="copyBtn" disabled>Copy tags</button>
+        <label class="toggle"><input type="checkbox" id="sortToggle" /> Sort A&ndash;Z</label>
       </div>
     </div>
 
@@ -153,6 +157,7 @@
   const uniqueCount = $("#uniqueCount");
   const copyBtn     = $("#copyBtn");
   const clearBtn    = $("#clearBtn");
+  const sortToggle  = $("#sortToggle");
 
   const TAG_RE = /<[^<>]+>/g;
 
@@ -169,6 +174,8 @@
       if (!seen.has(t)) { seen.add(t); currentTags.push(t); }
     }
 
+    if (sortToggle.checked) currentTags.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+
     uniqueCount.textContent = currentTags.length;
     copyBtn.disabled = currentTags.length === 0;
 
@@ -182,6 +189,7 @@
   }
 
   input.addEventListener("input", render);
+  sortToggle.addEventListener("change", render);
   clearBtn.addEventListener("click", () => { input.value = ""; render(); input.focus(); });
 
   copyBtn.addEventListener("click", async () => {
