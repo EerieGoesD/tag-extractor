@@ -95,10 +95,11 @@
 
   .toggle { display: inline-flex; align-items: center; gap: 7px; height: 32px; font-size: 12.5px; color: var(--text-dim); cursor: pointer; user-select: none; transition: color 0.12s; }
   .toggle:hover { color: var(--text); }
-  .toggle input { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; flex-shrink: 0; margin: 0; border: 1px solid var(--border); border-radius: 5px; background: var(--surface2); cursor: pointer; position: relative; transition: background 0.12s, border-color 0.12s; }
+  .toggle input { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; flex-shrink: 0; margin: 0; border: 1px solid var(--border); border-radius: 5px; background: var(--surface2); cursor: pointer; display: grid; place-content: center; transition: background 0.12s, border-color 0.12s; }
   .toggle input:hover { border-color: var(--accent); }
   .toggle input:checked { background: var(--accent); border-color: var(--accent); }
-  .toggle input:checked::after { content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .toggle input::before { content: ""; width: 9px; height: 9px; transform: scale(0); transition: transform 0.1s ease; box-shadow: inset 1em 1em #fff; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
+  .toggle input:checked::before { transform: scale(1); }
 </style>
 </head>
 <body>
