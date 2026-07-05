@@ -4,7 +4,7 @@ A tiny web tool that pulls every unique tag wrapped in `<angle brackets>` out of
 
 Paste text on the left, and each unique `<tag>` is listed on the right with a count of how many times it appears. One click copies the clean list.
 
-**Live:** https://eeriegoesd.github.io/tag-extractor/
+**Live:** https://eeriegoesd.com/tag-extractor/
 
 ---
 
