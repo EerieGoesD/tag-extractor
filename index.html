@@ -18,9 +18,6 @@
     --text-dim: #9b9ba6;
     --accent:   #6366f1;
     --accent-h: #818cf8;
-    --danger:   #ef4444;
-    --success:  #22c55e;
-    --warning:  #eab308;
     --radius:   10px;
     --font:     'DM Sans', system-ui, sans-serif;
     --mono:     'JetBrains Mono', monospace;
@@ -35,9 +32,6 @@
     --text-dim: #65656f;
     --accent:   #6366f1;
     --accent-h: #4f46e5;
-    --danger:   #dc2626;
-    --success:  #16a34a;
-    --warning:  #d97706;
   }
 
   html, body { min-height: 100%; }
@@ -46,7 +40,7 @@
   .wrap { max-width: 1080px; margin: 0 auto; padding: 22px 22px 40px; display: flex; flex-direction: column; min-height: 100vh; }
 
   /* ── Header ── */
-  .app-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .app-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
   .app-header-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--accent-h); filter: drop-shadow(0 0 6px rgba(99,102,241,0.5)); }
   .app-header h1 { font-size: 17px; font-weight: 700; color: var(--accent-h); letter-spacing: -0.3px; }
   .spacer { flex: 1; }
@@ -57,13 +51,11 @@
   html[data-theme="light"] .theme-btn .icon-sun  { display: none; }
   html[data-theme="light"] .theme-btn .icon-moon { display: inline; }
 
-  .subtitle { font-size: 13px; color: var(--text-dim); margin: 0 0 20px 30px; }
-
   /* ── Layout ── */
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1; min-height: 0; }
   @media (max-width: 780px) { .grid { grid-template-columns: 1fr; } }
 
-  .panel { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; min-height: 360px; }
+  .panel { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; min-height: 400px; }
   .panel-head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
   .panel-head .label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
   .panel-head .count { font-family: var(--mono); font-size: 11.5px; color: var(--accent-h); background: rgba(99,102,241,0.12); padding: 2px 8px; border-radius: 20px; }
@@ -73,35 +65,24 @@
     flex: 1; width: 100%; resize: none; border: none; outline: none;
     background: transparent; color: var(--text);
     font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
-    padding: 14px; min-height: 260px;
+    padding: 14px;
   }
-  textarea::placeholder { color: var(--text-dim); opacity: 0.7; }
   textarea::-webkit-scrollbar { width: 7px; }
   textarea::-webkit-scrollbar-thumb { background: #3a3a42; border-radius: 3px; }
   textarea::-webkit-scrollbar-track { background: transparent; }
 
-  /* ── Output ── */
+  /* ── Output: one tag per line, easy to select and copy ── */
   .output { flex: 1; overflow: auto; padding: 14px; }
   .output::-webkit-scrollbar { width: 7px; }
   .output::-webkit-scrollbar-thumb { background: #3a3a42; border-radius: 3px; }
   .output::-webkit-scrollbar-track { background: transparent; }
 
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-    padding: 6px 10px; font-family: var(--mono); font-size: 12.5px; color: var(--text);
-    animation: fadeIn 0.18s ease both;
-  }
-  .chip .n { font-size: 10.5px; color: var(--text-dim); background: var(--bg); border-radius: 20px; padding: 1px 7px; min-width: 20px; text-align: center; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+  .taglist { font-family: var(--mono); font-size: 13px; line-height: 1.9; white-space: pre; }
 
-  .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 8px; color: var(--text-dim); text-align: center; padding: 30px; }
-  .empty .icon { font-size: 30px; opacity: 0.22; }
-  .empty p { font-size: 13px; }
+  .empty { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-dim); font-size: 13px; opacity: 0.6; }
 
   /* ── Toolbar ── */
-  .toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; }
+  .toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); flex-shrink: 0; }
 
   .btn { padding: 7px 14px; border: none; border-radius: var(--radius); font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
   .btn:active { transform: scale(0.97); }
@@ -111,11 +92,6 @@
   html[data-theme="light"] .btn-accent:disabled { background: #d9d9e0; color: #a5a5b0; }
   .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
   .btn-ghost:hover { background: var(--surface2); color: var(--text); }
-  .btn-ghost:disabled { opacity: 0.4; cursor: default; transform: none; }
-  .btn-ghost:disabled:hover { background: transparent; color: var(--text-dim); }
-
-  .toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-dim); cursor: pointer; user-select: none; }
-  .toggle input { accent-color: var(--accent); cursor: pointer; margin: 0; }
 
   /* ── Footer ── */
   .global-footer { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 20px 0 0; margin-top: 22px; }
@@ -148,7 +124,6 @@
       <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     </button>
   </div>
-  <p class="subtitle">Paste the text on the left. Every unique tag in &lt;angle brackets&gt; is pulled out on the right.</p>
 
   <div class="grid">
 
@@ -156,17 +131,10 @@
     <div class="panel">
       <div class="panel-head">
         <span class="label">Paste Here</span>
-        <div class="spacer"></div>
-        <span class="count" id="inputCount">0 tags found</span>
       </div>
-      <textarea id="input" spellcheck="false" placeholder="1.
-00:00:00.000 - 00:00:00.252 : &lt;man1&gt; &lt;man2&gt; on &lt;background1&gt;
-
-2.
-00:00:00.238 - 00:00:02.010 : &lt;man1&gt; &lt;man2&gt; on &lt;background1&gt;"></textarea>
+      <textarea id="input" spellcheck="false"></textarea>
       <div class="toolbar">
         <button class="btn btn-ghost" id="clearBtn">Clear</button>
-        <button class="btn btn-ghost" id="pasteBtn">Paste from clipboard</button>
       </div>
     </div>
 
@@ -175,19 +143,13 @@
       <div class="panel-head">
         <span class="label">Unique Tags</span>
         <div class="spacer"></div>
-        <span class="count" id="uniqueCount">0 unique</span>
+        <span class="count" id="uniqueCount">0</span>
       </div>
       <div class="output" id="output">
-        <div class="empty" id="empty">
-          <div class="icon">&#9873;</div>
-          <p>Unique tags will appear here as you paste</p>
-        </div>
+        <div class="empty" id="empty"></div>
       </div>
       <div class="toolbar">
         <button class="btn btn-accent" id="copyBtn" disabled>Copy tags</button>
-        <label class="toggle"><input type="checkbox" id="sortToggle" /> Sort A&ndash;Z</label>
-        <label class="toggle"><input type="checkbox" id="countToggle" checked /> Show counts</label>
-        <div class="spacer"></div>
       </div>
     </div>
 
@@ -212,78 +174,44 @@
   const input       = $("#input");
   const output      = $("#output");
   const empty       = $("#empty");
-  const inputCount  = $("#inputCount");
   const uniqueCount = $("#uniqueCount");
   const copyBtn     = $("#copyBtn");
   const clearBtn    = $("#clearBtn");
-  const pasteBtn    = $("#pasteBtn");
-  const sortToggle  = $("#sortToggle");
-  const countToggle = $("#countToggle");
 
   const TAG_RE = /<[^<>]+>/g;
 
-  // Pull every <tag>, count how many times each appears, keep first-seen order.
-  function extract(text) {
-    const matches = text.match(TAG_RE) || [];
-    const map = new Map();          // tag -> count (Map keeps insertion order)
-    for (const raw of matches) {
-      const tag = raw.trim();
-      map.set(tag, (map.get(tag) || 0) + 1);
-    }
-    return { total: matches.length, map };
-  }
-
   function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
-  let currentTags = [];   // ordered list of unique tag strings (as displayed)
+  let currentTags = [];   // unique tags, in first-seen order
 
   function render() {
-    const { total, map } = extract(input.value);
-
-    let tags = [...map.keys()];
-    if (sortToggle.checked) tags = tags.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
-    currentTags = tags;
-
-    inputCount.textContent  = total === 1 ? "1 tag found" : total.toLocaleString() + " tags found";
-    uniqueCount.textContent = tags.length + " unique";
-    copyBtn.disabled = tags.length === 0;
-
-    if (!tags.length) {
-      output.innerHTML = "";
-      output.appendChild(empty);
-      empty.querySelector("p").textContent = input.value.trim()
-        ? "No tags found. Tags need to be wrapped in < > angle brackets."
-        : "Unique tags will appear here as you paste";
-      return;
+    const matches = input.value.match(TAG_RE) || [];
+    const seen = new Set();
+    currentTags = [];
+    for (const raw of matches) {
+      const t = raw.trim();
+      if (!seen.has(t)) { seen.add(t); currentTags.push(t); }
     }
 
-    const showCounts = countToggle.checked;
-    output.innerHTML = '<div class="chips">' + tags.map(t => {
-      const n = map.get(t);
-      const badge = showCounts ? `<span class="n">${n}</span>` : "";
-      return `<span class="chip">${esc(t)}${badge}</span>`;
-    }).join("") + '</div>';
+    uniqueCount.textContent = currentTags.length;
+    copyBtn.disabled = currentTags.length === 0;
+
+    if (!currentTags.length) {
+      output.innerHTML = "";
+      output.appendChild(empty);
+      empty.textContent = input.value.trim() ? "No tags found" : "";
+      return;
+    }
+    output.innerHTML = '<div class="taglist">' + currentTags.map(esc).join("\n") + '</div>';
   }
 
   input.addEventListener("input", render);
-  sortToggle.addEventListener("change", render);
-  countToggle.addEventListener("change", render);
-
   clearBtn.addEventListener("click", () => { input.value = ""; render(); input.focus(); });
-
-  pasteBtn.addEventListener("click", async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      input.value = text;
-      render();
-    } catch { input.focus(); }   // clipboard blocked (e.g. no permission) -> let user paste manually
-  });
 
   copyBtn.addEventListener("click", async () => {
     if (!currentTags.length) return;
-    const text = currentTags.join("\n");
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(currentTags.join("\n"));
       const old = copyBtn.textContent;
       copyBtn.textContent = "Copied!";
       setTimeout(() => { copyBtn.textContent = old; }, 1200);
