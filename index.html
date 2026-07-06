@@ -163,7 +163,10 @@
   const clearBtn    = $("#clearBtn");
   const sortToggle  = $("#sortToggle");
 
-  const TAG_RE = /<[^<>]+>/g;
+  // A tag is either something in <angle brackets>, or a snake_case identifier
+  // like enemy_dies. Plain-English descriptions (words with spaces, no underscore)
+  // are ignored automatically.
+  const TAG_RE = /<[^<>]+>|[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+/g;
 
   function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
